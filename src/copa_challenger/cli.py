@@ -29,5 +29,13 @@ def ingest() -> None:
     ingest_raw()
 
 
+@app.command()
+def build() -> None:
+    """Constrói a camada de staging (views stg.*) a partir dos modelos SQL."""
+    from copa_challenger.data.build import build_staging
+
+    build_staging()
+
+
 if __name__ == "__main__":
     app()

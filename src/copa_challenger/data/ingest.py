@@ -3,6 +3,7 @@
 import duckdb
 
 from copa_challenger.config import DUCKDB_PATH, RAW_DATA_DIR
+from copa_challenger.db import scalar
 
 # mapeamento explícito arquivo -> tabela na camada raw.
 # nomes de ranking carregam a data no arquivo; encurtamos para o ciclo.
@@ -50,7 +51,7 @@ def ingest_raw() -> None:
 def _print_catalog(con: duckdb.DuckDBPyConnection) -> None:
     """Imprime schema (coluna: tipo) e nº de linhas de cada tabela raw."""
     for table in TABLE_MAP.values():
-        n = con.execute(f"SELECT count(*) FROM raw.{table}").fetchone()[0]
+        n = scalar(con, f"SELECT count(*) FROM raw.{table}")
         cols = con.execute(f"DESCRIBE raw.{table}").fetchall()
         print(f"── raw.{table}  ({n:,} linhas)")
         for col in cols:

@@ -10,3 +10,5 @@ RAW_DATA_DIR = DATA_DIR / "raw"
 DUCKDB_PATH = DATA_DIR / "copa.duckdb"
 
 KAGGLE_DATASET = "piterfm/fifa-football-world-cup"
+
+SQL_DIR = PROJECT_ROOT / "sql"
