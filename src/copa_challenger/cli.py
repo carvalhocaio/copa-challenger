@@ -32,9 +32,17 @@ def ingest() -> None:
 @app.command()
 def build() -> None:
     """Constrói a camada de staging (views stg.*) a partir dos modelos SQL."""
-    from copa_challenger.data.build import build_staging
+    from copa_challenger.data.build import build_all
 
-    build_staging()
+    build_all()
+
+
+@app.command()
+def report() -> None:
+    """Responde as perguntas de negócio do desk (Missão 01)."""
+    from copa_challenger.analytics.report import run_report
+
+    run_report()
 
 
 if __name__ == "__main__":
