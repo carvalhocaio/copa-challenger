@@ -8,3 +8,14 @@ wheels/
 
 # Virtual environments
 .venv
+
+# dados da competição (regulamento + tamanho)
+data/raw/
+data/*.duckdb
+data/*.duckdb.wal
+
+# kaggle credentials
+kaggle.json
+
+# submissões geradas
+submissions/*.csv
