@@ -4,8 +4,8 @@
 
 CREATE OR REPLACE VIEW stg.rankings AS
 SELECT
-    DATE '2022-10-06'    AS snapshot_date,
-    2022                 AS cycle,
+    DATE '2022-10-06' AS snapshot_date,
+    2022 AS cycle,
     team,
     team_code,
     association,
@@ -17,8 +17,8 @@ SELECT
 FROM raw.ranking_2022
 UNION ALL
 SELECT
-    DATE '2026-06-08'    AS snapshot_date,
-    2026                 AS cycle,
+    DATE '2026-06-08' AS snapshot_date,
+    2026 AS cycle,
     team,
     team_code,
     association,
