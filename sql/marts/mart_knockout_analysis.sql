@@ -1,8 +1,8 @@
--- mart.knockout_analysys - dinâmica de mata-mata por edição.
+-- mart.knockout_analysis - dinâmica de mata-mata por edição.
 -- Responde: os jogos ficam mais travados (menos gols, mais pênaltis)
 -- conforme o torneio avança?
 
-CREATE OR REPLACE VIEW mart.knockout_analysys AS
+CREATE OR REPLACE VIEW mart.knockout_analysis AS
 SELECT
     year,
     round,
