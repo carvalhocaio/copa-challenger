@@ -14,8 +14,11 @@ STAGING_MODELS = [
 
 MART_MODELS = [
     "marts/int_team_matches.sql",
+    "marts/int_match_stages.sql",
     "marts/mart_team_performance.sql",
     "marts/mart_edition_kpis.sql",
+    "marts/mart_knockout_analysis.sql",
+    "marts/mart_ranking_vs_result.sql",
 ]
 
 
@@ -27,21 +30,25 @@ def _run_models(con: duckdb.DuckDBPyConnection, models: list[str]) -> None:
 
 
 def build_all() -> None:
-    """Cria/atualiza as camadas stg e mart, e imprime um resumo de sanidade."""
+    """Cria/atualiza seeds, camadas stg e mart, e imprime um resumo."""
     con = duckdb.connect(str(DUCKDB_PATH))
+    con.execute("CREATE SCHEMA IF NOT EXISTS seed;")
     con.execute("CREATE SCHEMA IF NOT EXISTS stg;")
     con.execute("CREATE SCHEMA IF NOT EXISTS mart;")
 
+    # seeds primeiro: marts dependem do crosswalk
+    _run_models(con, ["seeds/team_crosswalk.sql"])
     _run_models(con, STAGING_MODELS)
     _run_models(con, MART_MODELS)
 
-    print("\n― resumo ―")
+    print("\n── resumo ──")
     for view in (
         "stg.matches",
-        "stg.rankings",
         "mart.int_team_matches",
         "mart.team_performance",
         "mart.edition_kpis",
+        "mart.knockout_analysis",
+        "mart.ranking_vs_result",
     ):
         n = scalar(con, f"SELECT count(*) FROM {view}")
         print(f"  {view}: {n:,} linhas")

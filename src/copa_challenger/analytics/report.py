@@ -30,6 +30,28 @@ def run_report() -> None:
         LIMIT 8
     """).show()
 
+    print("\n == Q4 . O mata-mata trava? (gols e pênaltis por fase) ==")
+    con.sql("""
+        SELECT year, round, n_matches, goals_per_match, xg_per_match, pen_shootouts
+        FROM mart.knockout_analysis
+        ORDER BY year, stage_order
+    """).show()
+
+    print("\n == Q5 . O ranking FIFA previu 2022? (taxa de acerto do favorito) ==")
+    con.sql("""
+        SELECT
+            CASE WHEN round = 'Group stage' THEN 'Fase de grupos'
+                    ELSE 'Mata-mata' END                       AS phase,
+            count(*) FILTER (WHERE favorite_won IS NOT NULL) AS decided,
+            count(*) FILTER (WHERE favorite_won)             AS favorite_won,
+            round(100.0 * count(*) FILTER (WHERE favorite_won)
+                    / nullif(count(*) FILTER (WHERE favorite_won IS NOT NULL), 0), 1)
+                                                                AS favorite_win_pct
+        FROM mart.ranking_vs_result
+        GROUP BY phase
+        ORDER BY phase
+    """).show()
+
     # diagnósticos p/ os próximos passos (não são entregáveis, são bússola)
     print("\n -- diagnóstico: valores distintos de `round` --")
     print("(precisamos deles p/ classificar grupos x mata-mata na próxima etapa)")
