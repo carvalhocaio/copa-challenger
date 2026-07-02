@@ -12,32 +12,38 @@ STAGING_MODELS = [
     "staging/stg_rankings.sql",
 ]
 
+MART_MODELS = [
+    "marts/int_team_matches.sql",
+    "marts/mart_team_performance.sql",
+    "marts/mart_edition_kpis.sql",
+]
 
-def build_staging() -> None:
-    """Cria/atualiza as views da camada `stg` e imprime um resumo."""
-    con = duckdb.connect(str(DUCKDB_PATH))
-    con.execute("CREATE SCHEMA IF NOT EXISTS stg;")
 
-    for rel_path in STAGING_MODELS:
+def _run_models(con: duckdb.DuckDBPyConnection, models: list[str]) -> None:
+    for rel_path in models:
         sql = (SQL_DIR / rel_path).read_text(encoding="utf-8")
         con.execute(sql)
         print(f"ok - {rel_path}")
 
-    print("\n—— resumo da staging ——")
-    for view in ("matches", "world_cup", "rankings"):
-        n = scalar(con, f"SELECT count(*) FROM stg.{view}")
-        print(f"  stg.{view}: {n:,} linhas")
 
-    # sanity checks rápidos do escopo
-    by_year = con.execute(
-        "SELECT year, count(*) FROM stg.matches GROUP BY year ORDER BY year"
-    ).fetchall()
-    print("\n  partidas por edição:", dict(by_year))
+def build_all() -> None:
+    """Cria/atualiza as camadas stg e mart, e imprime um resumo de sanidade."""
+    con = duckdb.connect(str(DUCKDB_PATH))
+    con.execute("CREATE SCHEMA IF NOT EXISTS stg;")
+    con.execute("CREATE SCHEMA IF NOT EXISTS mart;")
 
-    pens = scalar(con, "SELECT count(*) FROM stg.matches WHERE decided_on_pens")
-    print(f"  decididas nos pênaltis: {pens}")
+    _run_models(con, STAGING_MODELS)
+    _run_models(con, MART_MODELS)
 
-    xg_cov = scalar(con, "SELECT count(*) FROM stg.matches WHERE home_xg IS NOT NULL")
-    print(f"  partidas com xG: {xg_cov}")
+    print("\n― resumo ―")
+    for view in (
+        "stg.matches",
+        "stg.rankings",
+        "mart.int_team_matches",
+        "mart.team_performance",
+        "mart.edition_kpis",
+    ):
+        n = scalar(con, f"SELECT count(*) FROM {view}")
+        print(f"  {view}: {n:,} linhas")
 
     con.close()
