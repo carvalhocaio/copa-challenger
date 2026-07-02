@@ -36,24 +36,24 @@ def ingest_raw() -> None:
         con.execute(
             f"""
             CREATE OR REPLACE TABLE raw.{table} AS
-            SELECT * FROM read_csv_auto(?, sample_size=1, header=true);
+            SELECT * FROM read_csv_auto(?, sample_size=-1, header=true);
             """,
             [str(csv_path)],
         )
-        print(f"raw.{table} <- {filename}")
+        print(f"raw.{table}  <-  {filename}")
 
-    print(f"\Ingestão concluída em {DUCKDB_PATH}\n")
+    print(f"\nIngestão concluída em {DUCKDB_PATH}\n")
     _print_catalog(con)
     con.close()
 
 
 def _print_catalog(con: duckdb.DuckDBPyConnection) -> None:
-    """Imprime schema (coluna: tipo) e nº de linha de cada tabela raw."""
+    """Imprime schema (coluna: tipo) e nº de linhas de cada tabela raw."""
     for table in TABLE_MAP.values():
         n = con.execute(f"SELECT count(*) FROM raw.{table}").fetchone()[0]
         cols = con.execute(f"DESCRIBE raw.{table}").fetchall()
-        print(f"- raw.{table} ({n:,} linhas)")
+        print(f"── raw.{table}  ({n:,} linhas)")
         for col in cols:
             name, dtype = col[0], col[1]
-            print(f" {name}: {dtype}")
+            print(f"     {name}: {dtype}")
         print()
