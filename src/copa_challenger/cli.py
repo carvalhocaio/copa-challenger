@@ -21,5 +21,13 @@ def download(
     download_dataset(force=force)
 
 
+@app.command()
+def ingest() -> None:
+    """Carrega os CSVs brutos para o DuckDB (camada raw) e imprime o catálogo."""
+    from copa_challenger.data.ingest import ingest_raw
+
+    ingest_raw()
+
+
 if __name__ == "__main__":
     app()
