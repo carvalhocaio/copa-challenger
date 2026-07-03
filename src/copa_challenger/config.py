@@ -12,3 +12,7 @@ DUCKDB_PATH = DATA_DIR / "copa.duckdb"
 KAGGLE_DATASET = "piterfm/fifa-football-world-cup"
 
 SQL_DIR = PROJECT_ROOT / "sql"
+
+# Dashboard (Evidence.dev)
+DASHBOARD_DIR = PROJECT_ROOT / "dashboard"
+DASHBOARD_SOURCE_DIR = DASHBOARD_DIR / "sources" / "copa"

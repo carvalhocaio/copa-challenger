@@ -45,5 +45,13 @@ def report() -> None:
     run_report()
 
 
+@app.command(name="sync-dashboard")
+def sync_dashboard() -> None:
+    """Copia o DuckDB para o proejto Evidence (dashboard/sources/copa/)."""
+    from copa_challenger.data.dashboard import sync_dashboard_db
+
+    sync_dashboard_db()
+
+
 if __name__ == "__main__":
     app()
