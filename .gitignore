@@ -19,3 +19,6 @@ kaggle.json
 
 # submissões geradas
 submissions/*.csv
+
+# marimo
+*/__marimo__/*

@@ -14,7 +14,7 @@ SELECT
     count(*) FILTER (WHERE won_match) AS advanced_or_won,
     sum(goals_for) AS goals_for,
     sum(goals_against) AS goals_against,
-    sum(goals_for) - sum(goals_against) AS goals_diff,
+    sum(goals_for) - sum(goals_against) AS goal_diff,
     round(sum(xg_for), 2) AS xg_for,
     round(sum(xg_against), 2) AS xg_against,
     round(sum(goals_for) - sum(xg_for), 2) AS attack_vs_xg,
