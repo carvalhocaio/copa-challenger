@@ -76,8 +76,10 @@ select
     year as "Edição",
     matches as "Jogos",
     goals_for as "GP",
-    goals_against as "GC",
+    xg_for as "xG a favor",
     attack_vs_xg as "Ataque vs xG",
+    goals_against as "GC",
+    xg_against as "xG contra",
     defense_vs_xg as "Defesa vs xG"
 from copa.team_performance
 where matches >= 5
