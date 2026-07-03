@@ -66,12 +66,16 @@ def _(alt, queries):
 
 @app.cell
 def _(mo):
-    mo.md("""
-    **So what:** as médias quase idênticas (2.64 vs 2.69) escondem a
-    *forma* da distribuição — se um torneio concentrou mais goleadas ou
-    mais jogos truncados, a mediana e a cauda contam história diferente
-    da média.
-    """)
+    mo.md(
+        """
+        **So what:** as médias quase idênticas (2.64 vs 2.69 gols/jogo)
+        escondem distribuições de *forma* diferente. Catar 2022 foi mais
+        **polarizado** — sete jogos sem gols (contra apenas um em 2018), mas
+        também mais goleadas nas pontas. Rússia 2018 concentrou-se na faixa de
+        1 a 3 gols. Ou seja: mesma média, torneios de temperamento oposto — um
+        equilibrado, outro de oito ou oitenta.
+        """
+    )
     return
 
 
@@ -235,11 +239,16 @@ def _(mo, queries):
 
 @app.cell
 def _(mo):
-    mo.md("""
-    **So what:** as disputas por pênaltis concentram-se no mata-mata e
-    decidem confrontos onde o jogo terminou empatado — sorte estruturada.
-    Croácia (2018) construiu boa parte da campanha de vice justamente aqui.
-    """)
+    mo.md(
+        """
+        **So what:** as disputas por pênaltis concentram-se no mata-mata e
+        decidem confrontos que terminaram empatados — sorte estruturada. E há
+        um nome que domina o fator: a **Croácia aparece em 4 das 9 disputas**
+        do escopo (Dinamarca e Rússia em 2018; Japão e Brasil em 2022),
+        vencendo a maioria. As campanhas de vice (2018) e semifinal (2022) não
+        foram construídas apesar dos pênaltis — foram construídas **neles**.
+        """
+    )
     return
 
 
