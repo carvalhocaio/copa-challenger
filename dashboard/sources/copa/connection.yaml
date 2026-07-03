@@ -1,0 +1,4 @@
+name: copa
+type: duckdb
+options:
+  filename: copa.duckdb
