@@ -1,7 +1,8 @@
 appearance:
   default: system
   switcher: true
-  showQueries: false
+
+showQueries: false
 
 theme:
   colorPalettes:
