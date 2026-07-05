@@ -26,6 +26,13 @@ eda = [
     "pyarrow>=24.0.0",
 ]
 
+agent = [
+    "pydantic-ai>=2.5",
+    "logfire>=4.37",
+    "sqlglot>=30",
+    "streamlit>=1.58",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
