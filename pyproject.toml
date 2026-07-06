@@ -17,6 +17,7 @@ copa = "copa_challenger.cli:app"
 [dependency-groups]
 dev = [
     "ruff>=0.8",
+    "pytest>=8.0",
 ]
 
 eda = [
