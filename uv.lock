@@ -379,7 +379,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 agent = [
     { name = "logfire", specifier = ">=4.37" },
-    { name = "pydantic-ai", specifier = ">=2.5" },
+    { name = "pydantic-ai", extras = ["google"], specifier = ">=2.5" },
     { name = "sqlglot", specifier = ">=30" },
     { name = "streamlit", specifier = ">=1.58" },
 ]
