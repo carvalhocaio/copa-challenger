@@ -28,7 +28,7 @@ eda = [
 ]
 
 agent = [
-    "pydantic-ai>=2.5",
+    "pydantic-ai[google]>=2.5",
     "logfire>=4.37",
     "sqlglot>=30",
     "streamlit>=1.58",
