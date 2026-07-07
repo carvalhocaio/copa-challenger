@@ -44,7 +44,7 @@ SELECT sobre o schema `mart`.
 """
 
 _model = GoogleModel(
-    "gemini-3.5-flash",
+    "gemini-2.5-flash",
     provider=GoogleProvider(
         api_key=os.environ.get(
             "GEMINI_API_KEY",
