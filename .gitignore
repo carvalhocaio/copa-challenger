@@ -26,3 +26,6 @@ notebooks/*.html
 
 # duckdb copiado para o Evidence (regenerável via copa sync-dashboard)
 dashboard/sources/copa/*.duckdb
+
+# secrets
+.env
