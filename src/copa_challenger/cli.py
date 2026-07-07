@@ -53,5 +53,16 @@ def sync_dashboard() -> None:
     sync_dashboard_db()
 
 
+@app.command()
+def chat() -> None:
+    """Sobe a interface de chat do agente (Streamlit)."""
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    app_path = Path(__file__).parent / "agent" / "app.py"
+    subprocess.run([sys.executable, "-m", "streamlit", "run", str(app_path)], check=True)
+
+
 if __name__ == "__main__":
     app()
