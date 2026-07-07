@@ -9,6 +9,7 @@ dependencies = [
     "polars>=1.17",
     "kaggle>=1.6",
     "typer>=0.15",
+    "numpy>=2.0",
 ]
 
 [project.scripts]

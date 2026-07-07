@@ -54,6 +54,22 @@ def sync_dashboard() -> None:
 
 
 @app.command()
+def predict() -> None:
+    """Gera probabilidades W/D/L e gols esperados para os 72 jogos de 2026 (Missão 04)."""
+    from copa_challenger.predict.predict import generate_predictions
+
+    generate_predictions()
+
+
+@app.command()
+def backtest() -> None:
+    """Valida o modelo preditivo contra os 64 jogos reais de 2022 (Missão 04)."""
+    from copa_challenger.predict.evaluate import run_backtest
+
+    run_backtest()
+
+
+@app.command()
 def chat() -> None:
     """Sobe a interface de chat do agente (Streamlit)."""
     import subprocess

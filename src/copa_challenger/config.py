@@ -16,3 +16,6 @@ SQL_DIR = PROJECT_ROOT / "sql"
 # Dashboard (Evidence.dev)
 DASHBOARD_DIR = PROJECT_ROOT / "dashboard"
 DASHBOARD_SOURCE_DIR = DASHBOARD_DIR / "sources" / "copa"
+
+# Saída do pipeline preditivo (Missão 04)
+SUBMISSIONS_DIR = PROJECT_ROOT / "submissions"
