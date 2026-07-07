@@ -1,10 +1,10 @@
-"""O cérebro do World Cup Intelligence Desk - agente híbrido (PydanticAI 2.5).
+"""O cérebro do World Cup Intelligence Desk — agente híbrido (PydanticAI 2.5).
 
 Superfícies:
-    - 4 typed tools determinísticas (SQL fixo, cobrem o grosso das perguntas)
-    - run_sql: escape hatch text-to-SQL, blindado pelo executor (3 anéis)
+  - 4 typed tools determinísticas (SQL fixo, cobrem o grosso das perguntas)
+  - run_sql: escape hatch text-to-SQL, blindado pelo executor (3 anéis)
 
-O agente NUNCA toca o banco direto - só via tools. O system prompt carrega o
+O agente NUNCA toca o banco direto — só via tools. O system prompt carrega o
 schema mart e as ressalvas de domínio. Logfire instrumenta cada decisão.
 """
 
@@ -13,7 +13,7 @@ from __future__ import annotations
 import os
 
 import logfire
-from pydantic_ai import Agent, RunContext
+from pydantic_ai import Agent
 from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.providers.google import GoogleProvider
 
@@ -27,17 +27,17 @@ logfire.configure(send_to_logfire="if-token-present", service_name="copa-agent")
 logfire.instrument_pydantic_ai()
 
 _SYSTEM_PROMPT = f"""\
-Você é o analista do World Cup Intelligence Desk - uma mesa de inteligência \
+Você é o analista do World Cup Intelligence Desk — uma mesa de inteligência \
 sobre as Copas do Mundo de 2018 e 2022. Responde perguntas de negócio com base \
 EXCLUSIVAMENTE nos dados fornecidos pelas suas ferramentas.
 
 Diretrizes:
 - Use as ferramentas tipadas (get_team_performance, compare_editions, \
-    favorite_win_rate, list_shootouts) sempre que a pergunta se encaixar nelas.
-- Para perguntas fora do escopo dessas ferramentas, use run_sql com um query \
+favorite_win_rate, list_shootouts) sempre que a pergunta se encaixar nelas.
+- Para perguntas fora do escopo dessas ferramentas, use run_sql com uma query \
 SELECT sobre o schema `mart`.
 - NUNCA invente números. Se os dados não respondem, diga isso claramente.
-- Responda em português do Brasil, de forma concisa e analítica. Cite os números que embasam.
+- Responda em português, de forma concisa e analítica. Cite os números que embasam.
 - Respeite as ressalvas de domínio abaixo à risca.
 
 {render_schema_for_prompt()}
@@ -62,11 +62,11 @@ def get_team_performance(team: str, year: int) -> str:
     """Performance de uma seleção numa edição (2018 ou 2022): gols, xG, eficiência."""
     r = run_safe_sql(f"""
         SELECT team, year, matches, goals_for, xg_for, attack_vs_xg,
-                     goals_against, xg_against, defense_vs_xg, goal_diff
+               goals_against, xg_against, defense_vs_xg, goal_diff
         FROM mart.team_performance
         WHERE lower(team) = lower('{_esc(team)}') AND year = {int(year)}
     """)
-    return r.to_markdown if r.row_count else f"Sem dados para {team} em {year}"
+    return r.to_markdown() if r.row_count else f"Sem dados para {team} em {year}."
 
 
 @agent.tool_plain
@@ -106,7 +106,7 @@ def list_shootouts() -> str:
 def run_sql(query: str) -> str:
     """Executa um SELECT sobre o schema `mart` para perguntas fora das tools fixas.
 
-    A query é validada (só SELECT, só tabelas mart) e executa read-only.
+    A query é validada (só SELECT, só tabelas mart) e executada read-only.
     Use os nomes de tabela/coluna exatos do schema no system prompt.
     """
     try:
@@ -114,7 +114,7 @@ def run_sql(query: str) -> str:
     except SQLGuardError as e:
         return f"Query rejeitada pelo guardrail de segurança: {e}"
     except Exception as e:  # erro de sintaxe/execução - devolve ao LLM para corrigir
-        return f"Erro ao executar {e}"
+        return f"Erro ao executar: {e}"
     return r.to_markdown() if r.row_count else "_(a query não retornou linhas)_"
 
 
