@@ -13,6 +13,7 @@ from __future__ import annotations
 import os
 
 import logfire
+from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.providers.google import GoogleProvider
@@ -20,6 +21,8 @@ from pydantic_ai.providers.google import GoogleProvider
 from copa_challenger.agent.executor import run_safe_sql
 from copa_challenger.agent.schema import render_schema_for_prompt
 from copa_challenger.agent.sql_guard import SQLGuardError
+
+load_dotenv()
 
 # - observabilidade (Logfire) -
 # send_to_logfire='if-token-present': funciona sem token (dev), envia se houver.

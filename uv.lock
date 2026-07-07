@@ -354,6 +354,7 @@ dependencies = [
 agent = [
     { name = "logfire" },
     { name = "pydantic-ai" },
+    { name = "python-dotenv" },
     { name = "sqlglot" },
     { name = "streamlit" },
 ]
@@ -380,6 +381,7 @@ requires-dist = [
 agent = [
     { name = "logfire", specifier = ">=4.37" },
     { name = "pydantic-ai", extras = ["google"], specifier = ">=2.5" },
+    { name = "python-dotenv", specifier = ">=1.0" },
     { name = "sqlglot", specifier = ">=30" },
     { name = "streamlit", specifier = ">=1.58" },
 ]

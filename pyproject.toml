@@ -32,6 +32,7 @@ agent = [
     "logfire>=4.37",
     "sqlglot>=30",
     "streamlit>=1.58",
+    "python-dotenv>=1.0",
 ]
 
 [build-system]
