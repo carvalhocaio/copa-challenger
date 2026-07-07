@@ -1,8 +1,6 @@
-"""Execução segura de SQL contra a camada mart — o anel final de defesa.
-
-Fluxo: valida (sql_guard) → força LIMIT → conexão READ-ONLY → executa.
-Isolado do agente de propósito: testável sem LLM, e concentra todo o acesso
-ao banco num único ponto auditável.
+"""Execução de SQL contra a camada mart: valida, aplica LIMIT, roda em
+conexão read-only. Separado do agente de propósito — testável sem LLM, e
+concentra todo o acesso ao banco num único lugar.
 """
 
 from __future__ import annotations
@@ -52,10 +50,10 @@ def _fmt(value: object) -> str:
 
 def run_safe_sql(sql: str, max_rows: int = MAX_ROWS_DEFAULT) -> QueryResult:
     """Valida, limita e executa um SELECT read-only. Levanta SQLGuardError se reprovar."""
-    validated = validate_sql(sql)  # anel 1: AST (só SELECT, só allowlist)
-    limited = enforce_row_limit(validated, max_rows)  # anel 2: cap de linhas
+    validated = validate_sql(sql)  # passo 1: AST (só SELECT, só allowlist)
+    limited = enforce_row_limit(validated, max_rows)  # passo 2: cap de linhas
 
-    # anel 3: conexão fisicamente read-only — mutação é impossível na raiz
+    # passo 3: conexão read-only — mutação é impossível na raiz
     con = duckdb.connect(str(DUCKDB_PATH), read_only=True)
     try:
         cur = con.execute(limited)

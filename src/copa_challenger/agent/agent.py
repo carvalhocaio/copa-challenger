@@ -1,18 +1,15 @@
-"""O cérebro do World Cup Intelligence Desk — agente híbrido (PydanticAI 2.5).
+"""Agente PydanticAI do World Cup Intelligence Desk.
 
-Superfícies:
-  - 4 typed tools determinísticas (SQL fixo, cobrem o grosso das perguntas)
-  - run_sql: escape hatch text-to-SQL, blindado pelo executor (3 anéis)
-
-O agente NUNCA toca o banco direto — só via tools. O system prompt carrega o
-schema mart e as ressalvas de domínio. Logfire instrumenta cada decisão.
+Expõe 4 tools tipadas com SQL fixo para as perguntas mais comuns, mais
+`run_sql` como escape hatch de text-to-SQL para o resto. O agente nunca
+toca o banco direto: todo acesso passa por `executor.run_safe_sql`, que
+valida e executa em conexão read-only (ver sql_guard.py).
 """
 
 from __future__ import annotations
 
 import os
 
-import logfire
 from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.models.google import GoogleModel
@@ -23,11 +20,6 @@ from copa_challenger.agent.schema import render_schema_for_prompt
 from copa_challenger.agent.sql_guard import SQLGuardError
 
 load_dotenv()
-
-# - observabilidade (Logfire) -
-# send_to_logfire='if-token-present': funciona sem token (dev), envia se houver.
-logfire.configure(send_to_logfire="if-token-present", service_name="copa-agent")
-logfire.instrument_pydantic_ai()
 
 _SYSTEM_PROMPT = f"""\
 Você é o analista do World Cup Intelligence Desk — uma mesa de inteligência \

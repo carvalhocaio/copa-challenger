@@ -1,8 +1,8 @@
 """Guardrail de SQL para o escape hatch text-to-SQL do agente.
 
-Valida, via AST (sqlglot), que o SQL gerado pelo LLM é seguro ANTES de tocar
-o banco. Defesa em profundidade — este é o primeiro anel; a conexão read-only
-e o cap de linhas são os anéis seguintes.
+Valida, via AST (sqlglot), que o SQL gerado pelo LLM é seguro antes de tocar
+o banco. É o primeiro dos três passos de `executor.run_safe_sql`; a conexão
+read-only e o cap de linhas vêm depois.
 
 Regras (todas obrigatórias):
   1. Statement único (sem múltiplos comandos encadeados por ';').
