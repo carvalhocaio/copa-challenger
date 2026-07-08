@@ -97,7 +97,3 @@ O backlog de melhorias conscientes (não bugs escondidos) está nas [issues do r
 ## Licença e créditos
 
 Código sob licença [MIT](LICENSE). Dados: [FIFA World Cup dataset](https://www.kaggle.com/datasets/piterfm/fifa-football-world-cup) (Kaggle, por `piterfm`).
-
-## Submissão
-
-O repositório é o artefato principal desta entrega. Não consegui confirmar de forma automatizada os detalhes exatos do regulamento oficial da competição (seção "Submissões e Avaliação") — vale conferir manualmente se, além do link deste repositório, a competição exige algo adicional no Kaggle (Notebook, Writeup).
