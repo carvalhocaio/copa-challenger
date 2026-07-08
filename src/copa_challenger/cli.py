@@ -13,7 +13,7 @@ def main() -> None:
 
 @app.command()
 def download(
-    force: bool = typer.Option(False, "--force", help="Rebaixa mesmo se os dados já existirem."),
+    force: bool = typer.Option(False, "--force", help="Baixa novamente mesmo se os dados já existirem."),
 ) -> None:
     """Baixa o dataset oficial da competição para data/raw/."""
     from copa_challenger.data.download import download_dataset
@@ -47,7 +47,7 @@ def report() -> None:
 
 @app.command(name="sync-dashboard")
 def sync_dashboard() -> None:
-    """Copia o DuckDB para o proejto Evidence (dashboard/sources/copa/)."""
+    """Copia o DuckDB para o projeto Evidence (dashboard/sources/copa/)."""
     from copa_challenger.data.dashboard import sync_dashboard_db
 
     sync_dashboard_db()
