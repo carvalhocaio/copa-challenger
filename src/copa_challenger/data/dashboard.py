@@ -1,6 +1,6 @@
 """Sincroniza o DuckDB de trabalho para o projeto Evidence (dashboard).
 
-Copia data/copa.duckdb -> dashboar/sources/copa/copa.duckdb. Isso evita que
+Copia data/copa.duckdb -> dashboard/sources/copa/copa.duckdb. Isso evita que
 o Evidence abra o banco de trabalho (e o lock de leitura/escrita do DuckDB).
 O arquivo copiado é um artefato de build, regenerável a qualquer momento com:
     uv run copa build && uv run copa sync-dashboard
