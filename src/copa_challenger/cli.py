@@ -8,12 +8,18 @@ app = typer.Typer(help="World Cup Intelligence Desk — Copa Challenger")
 @app.callback()
 def main() -> None:
     """World Cup Intelligence Desk — Copa Challenger."""
-    pass
+    # Carrega variáveis do .env (ex.: GEMINI_API_KEY, KAGGLE_USERNAME/KAGGLE_KEY)
+    # para todos os comandos, antes que o kaggle valide credenciais no import.
+    from dotenv import load_dotenv
+
+    load_dotenv()
 
 
 @app.command()
 def download(
-    force: bool = typer.Option(False, "--force", help="Baixa novamente mesmo se os dados já existirem."),
+    force: bool = typer.Option(
+        False, "--force", help="Baixa novamente mesmo se os dados já existirem."
+    ),
 ) -> None:
     """Baixa o dataset oficial da competição para data/raw/."""
     from copa_challenger.data.download import download_dataset
