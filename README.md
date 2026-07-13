@@ -21,6 +21,7 @@ O projeto percorre as 4 missões do desafio como camadas de um mesmo pipeline: *
 - **Node ≥ 18 / npm ≥ 7** — só para a Missão 3 (dashboard Evidence.dev).
 - **Credenciais do Kaggle** (`~/.kaggle/kaggle.json` ou `KAGGLE_USERNAME`/`KAGGLE_KEY`) — só para `copa download`.
 - **`GEMINI_API_KEY`** — só para `copa chat`.
+- Copie `.env.example` para `.env` (`cp .env.example .env`) e preencha as chaves acima — `copa chat`/`copa download` carregam esse `.env` automaticamente.
 - O projeto usa `dependency-groups` no `pyproject.toml` (`dev`, `eda`, `agent`); nenhum grupo default cobre tudo. Use `uv sync --all-groups` para instalar todas as etapas de uma vez.
 
 ## Quickstart
