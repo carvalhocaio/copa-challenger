@@ -49,4 +49,4 @@ order by total_goals
 
 ## Onde a análise vai
 
-Este desk se desdobra em duas leituras. **[As duas Copas](/edicoes)** compara Rússia e Catar em eficiência ofensiva e defensiva — quem mereceu o placar e quem viveu de finalização. **[O paradoxo do favorito](/favorito)** enfrenta a pergunta que o ranking FIFA não responde: por que o número 1 nunca levantou a taça.
+Este desk se desdobra em três leituras. **[As duas Copas](/edicoes)** compara Rússia e Catar em eficiência ofensiva e defensiva — quem mereceu o placar e quem viveu de finalização. **[O paradoxo do favorito](/favorito)** enfrenta a pergunta que o ranking FIFA não responde: por que o número 1 nunca levantou a taça. E **[Previsões 2026](/previsoes-2026)** vira o olhar para frente: o que o modelo preditivo projeta para a fase de grupos da próxima Copa.
