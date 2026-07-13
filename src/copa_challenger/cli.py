@@ -100,11 +100,20 @@ def pipeline(
 
 
 @app.command()
-def backtest() -> None:
+def backtest(
+    sweep: bool = typer.Option(
+        False,
+        "--sweep",
+        help="Varre a grade (k, blend gol/xG) e imprime uma tabela ordenada por log-loss.",
+    ),
+) -> None:
     """Valida o modelo preditivo contra os 64 jogos reais de 2022 (Missão 04)."""
-    from copa_challenger.predict.evaluate import run_backtest
+    from copa_challenger.predict.evaluate import run_backtest, run_sweep
 
-    run_backtest()
+    if sweep:
+        run_sweep()
+    else:
+        run_backtest()
 
 
 @app.command()

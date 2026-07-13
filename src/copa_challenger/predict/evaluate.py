@@ -75,14 +75,21 @@ def bootstrap_cis(
     }
 
 
-def run_backtest() -> None:
-    con = _con()
+def _model_metrics(
+    con: duckdb.DuckDBPyConnection, k: float, blend_weight: float
+) -> tuple[list[str], list[tuple[float, float, float]], list[str], list[str]]:
+    """Avalia o modelo nos 64 jogos de 2022 para (k, blend_weight) dados.
 
+    Devolve, alinhados por jogo: resultados reais, probabilidades W/D/L do
+    modelo, rótulo previsto pelo modelo e rótulo do baseline "favorito do
+    ranking" (este independe de k/blend, mas é incluído aqui por reusar os
+    mesmos jogos e ranking já carregados). Não fecha a conexão.
+    """
     rankings_2022 = features.team_rankings_2022(con)
-    feats = features.team_features(con, rankings_2022, years=[2018])
+    feats = features.team_features(con, rankings_2022, years=[2018], k=k, blend_weight=blend_weight)
     fit = model.fit_fallback(feats)
     feats_full = model.apply_fallback(feats, fit)
-    league_avg = features.league_average_goals(con, years=[2018])
+    league_avg = features.league_average_goals(con, years=[2018], blend_weight=blend_weight)
 
     strength = {
         row["team"]: (row["attack"], row["defense"]) for row in feats_full.iter_rows(named=True)
@@ -113,6 +120,16 @@ def run_backtest() -> None:
         model_probs.append(probs)
         model_preds.append(_predicted_label(probs))
         favorite_preds.append("home_win" if rank_lookup[home] < rank_lookup[away] else "away_win")
+
+    return actuals, model_probs, model_preds, favorite_preds
+
+
+def run_backtest() -> None:
+    con = _con()
+
+    actuals, model_probs, model_preds, favorite_preds = _model_metrics(
+        con, features.SHRINKAGE_K, blend_weight=0.5
+    )
 
     n = len(actuals)
 
@@ -175,3 +192,35 @@ def run_backtest() -> None:
     print(f"{'baseline: favorito do ranking':<32}")
     print(f"  accuracy: {favorite_accuracy:>6.1%}  IC90% {_pct_ci('favorite_acc')}")
     print(f"  log-loss: {'n/a':>6}  (prediz sempre o rótulo, sem distribuição de probabilidade)")
+
+
+def run_sweep(
+    k_grid: tuple[float, ...] = (1.0, 2.0, 3.0, 5.0, 8.0),
+    blend_grid: tuple[float, ...] = (0.0, 0.25, 0.5, 0.75, 1.0),
+) -> None:
+    """Varre a grade (k, blend_weight) reavaliando o modelo no backtest e imprime
+    uma tabela ordenada por log-loss, marcando o default (k=3.0, blend=0.5).
+
+    Não altera o default do modelo — é só uma ferramenta de calibração. Usa o
+    mesmo loop de avaliação de `run_backtest` via `_model_metrics`.
+    """
+    con = _con()
+    rows = []
+    for k in k_grid:
+        for blend_weight in blend_grid:
+            actuals, model_probs, model_preds, _ = _model_metrics(con, k, blend_weight)
+            n = len(actuals)
+            accuracy = sum(p == a for p, a in zip(model_preds, actuals, strict=True)) / n
+            log_loss = _log_loss(actuals, model_probs)
+            is_default = k == 3.0 and blend_weight == 0.5
+            rows.append((k, blend_weight, accuracy, log_loss, is_default))
+    con.close()
+
+    rows.sort(key=lambda r: r[3])  # ordena por log-loss (menor = melhor)
+
+    print(f"\nSweep do backtest — {len(rows)} combinações (treino 2018, teste 2022)")
+    print("Ordenado por log-loss (menor = melhor). (*) = default atual k=3.0/blend=0.5\n")
+    print(f"{'k':>5}{'blend':>8}{'accuracy':>11}{'log-loss':>11}")
+    for k, blend_weight, accuracy, log_loss, is_default in rows:
+        mark = " (*)" if is_default else ""
+        print(f"{k:>5.1f}{blend_weight:>8.2f}{accuracy:>11.1%}{log_loss:>11.3f}{mark}")
