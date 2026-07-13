@@ -29,8 +29,11 @@ EXCLUSIVAMENTE nos dados fornecidos pelas suas ferramentas.
 Diretrizes:
 - Use as ferramentas tipadas (get_team_performance, compare_editions, \
 favorite_win_rate, list_shootouts) sempre que a pergunta se encaixar nelas.
+- Para perguntas sobre um jogo específico da Copa de 2026, use get_prediction_2026 \
+(ou run_sql sobre predict.predictions_2026). Deixe SEMPRE claro que são projeções do \
+modelo, não resultados.
 - Para perguntas fora do escopo dessas ferramentas, use run_sql com uma query \
-SELECT sobre o schema `mart`.
+SELECT sobre o schema `mart` (histórico) ou `predict` (previsões de 2026).
 - NUNCA invente números. Se os dados não respondem, diga isso claramente.
 - Responda em português, de forma concisa e analítica. Cite os números que embasam.
 - Respeite as ressalvas de domínio abaixo à risca.
@@ -94,6 +97,30 @@ def list_shootouts() -> str:
         WHERE decided_on_pens
         ORDER BY year, stage_order
     """).to_markdown()
+
+
+@agent.tool_plain
+def get_prediction_2026(team_a: str, team_b: str) -> str:
+    """Previsão do modelo para um jogo da Copa de 2026 entre dois times.
+
+    Projeção W/D/L e gols esperados (não é resultado). Casa o confronto em
+    qualquer ordem mando/visitante do calendário.
+    """
+    a, b = _esc(team_a), _esc(team_b)
+    r = run_safe_sql(f"""
+        SELECT round, date, home_team, away_team,
+               expected_home_goals, expected_away_goals,
+               prob_home_win, prob_draw, prob_away_win
+        FROM predict.predictions_2026
+        WHERE (lower(home_team) = lower('{a}') AND lower(away_team) = lower('{b}'))
+           OR (lower(home_team) = lower('{b}') AND lower(away_team) = lower('{a}'))
+    """)
+    if not r.row_count:
+        return (
+            f"Sem previsão de 2026 para {team_a} x {team_b} — só há jogos da fase "
+            f"de grupos no calendário atual."
+        )
+    return r.to_markdown()
 
 
 # - escape hatch text-to-SQL -
