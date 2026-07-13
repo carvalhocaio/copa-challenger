@@ -158,8 +158,27 @@ MART_TABLES: tuple[Table, ...] = (
     ),
 )
 
+# Tabela de previsões de 2026 (schema `predict`) — projeções do modelo, não histórico.
+PREDICT_TABLES: tuple[Table, ...] = (
+    Table(
+        name="predict.predictions_2026",
+        grain="uma linha por jogo agendado da Copa de 2026 (72 jogos, fase de grupos)",
+        columns=(
+            Column("round", "VARCHAR", "fase (todos 'Group stage' no calendário atual)"),
+            Column("date", "DATE", "data do jogo"),
+            Column("home_team", "VARCHAR", "seleção mandante no calendário"),
+            Column("away_team", "VARCHAR", "seleção visitante no calendário"),
+            Column("expected_home_goals", "DOUBLE", "gols esperados do mandante (modelo Poisson)"),
+            Column("expected_away_goals", "DOUBLE", "gols esperados do visitante"),
+            Column("prob_home_win", "DOUBLE", "probabilidade projetada de vitória do mandante"),
+            Column("prob_draw", "DOUBLE", "probabilidade projetada de empate"),
+            Column("prob_away_win", "DOUBLE", "probabilidade projetada de vitória do visitante"),
+        ),
+    ),
+)
+
 # Allowlist do guardrail: só estas tabelas podem ser referenciadas pelo SQL.
-ALLOWED_TABLES: frozenset[str] = frozenset(t.name for t in MART_TABLES)
+ALLOWED_TABLES: frozenset[str] = frozenset(t.name for t in (*MART_TABLES, *PREDICT_TABLES))
 
 # Avisos de domínio injetados no system prompt - blindam contra alucinação.
 DATA_CAVEATS: tuple[str, ...] = (
@@ -173,6 +192,10 @@ DATA_CAVEATS: tuple[str, ...] = (
     "winner e favorite_won são NULL em empates reais da fase de grupos.",
     "Amostras são pequenas (uma ou duas edições). Reporte tendências como indício, "
     "não prova estatística.",
+    "predict.predictions_2026 são PROJEÇÕES do modelo para a Copa de 2026 (72 jogos da "
+    "fase de grupos), NÃO resultados. Deixe SEMPRE explícito que são estimativas.",
+    "As previsões de 2026 tratam todos os jogos como neutros (sem vantagem de mando): a "
+    "fonte não distingue sede real de sede neutra.",
 )
 
 
@@ -180,6 +203,14 @@ def render_schema_for_prompt() -> str:
     """Renderiza o schema `mart` como bloco de texto compacto para o system prompt."""
     lines: list[str] = ["TABELAS DISPONÍVEIS (schema `mart`, somente leitura):", ""]
     for t in MART_TABLES:
+        lines.append(f"### {t.name} - {t.grain}")
+        for c in t.columns:
+            lines.append(f" - {c.name} ({c.type}): {c.description}")
+        lines.append("")
+    lines.append("PREVISÕES DE 2026 (schema `predict`, somente leitura):")
+    lines.append("Projeções do modelo para a próxima Copa — NÃO são dados históricos.")
+    lines.append("")
+    for t in PREDICT_TABLES:
         lines.append(f"### {t.name} - {t.grain}")
         for c in t.columns:
             lines.append(f" - {c.name} ({c.type}): {c.description}")

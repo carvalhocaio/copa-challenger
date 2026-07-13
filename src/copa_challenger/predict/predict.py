@@ -19,6 +19,21 @@ def _con() -> duckdb.DuckDBPyConnection:
     return duckdb.connect(str(DUCKDB_PATH), read_only=True)
 
 
+def _persist_to_duckdb(predictions: pl.DataFrame) -> None:
+    """Materializa as previsões em predict.predictions_2026 (além do CSV), para o
+    agente de chat consultá-las pelo mesmo guardrail dos dados históricos."""
+    con = duckdb.connect(str(DUCKDB_PATH))  # read-write
+    try:
+        con.execute("CREATE SCHEMA IF NOT EXISTS predict;")
+        con.register("_predictions_2026", predictions)
+        con.execute(
+            "CREATE OR REPLACE TABLE predict.predictions_2026 AS SELECT * FROM _predictions_2026"
+        )
+        con.unregister("_predictions_2026")
+    finally:
+        con.close()
+
+
 def generate_predictions() -> pl.DataFrame:
     con = _con()
 
@@ -66,11 +81,12 @@ def generate_predictions() -> pl.DataFrame:
     SUBMISSIONS_DIR.mkdir(parents=True, exist_ok=True)
     out_path = SUBMISSIONS_DIR / "predictions_2026.csv"
     predictions.write_csv(out_path)
+    _persist_to_duckdb(predictions)
 
     prob_sums = (
         predictions["prob_home_win"] + predictions["prob_draw"] + predictions["prob_away_win"]
     )
-    print(f"ok - {predictions.height} jogos -> {out_path}")
+    print(f"ok - {predictions.height} jogos -> {out_path} + predict.predictions_2026")
     print(f"sanity: soma das probabilidades entre {prob_sums.min():.4f} e {prob_sums.max():.4f}")
 
     return predictions

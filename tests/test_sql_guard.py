@@ -2,6 +2,7 @@
 
 import pytest
 
+from copa_challenger.agent.schema import ALLOWED_TABLES
 from copa_challenger.agent.sql_guard import (
     SQLGuardError,
     enforce_row_limit,
@@ -16,6 +17,7 @@ VALID = [
     """SELECT t.team FROM mart.team_performance t
        WHERE t.attack_vs_xg > (SELECT avg(attack_vs_xg) FROM mart.team_performance)""",
     "SELECT * FROM mart.edition_kpis UNION ALL SELECT * FROM mart.edition_kpis",
+    "SELECT home_team, away_team, prob_home_win FROM predict.predictions_2026",
 ]
 
 # ── ataques e violações: devem REPROVAR ──
@@ -33,7 +35,12 @@ MALICIOUS = [
     "PRAGMA database_list",
     "CREATE TABLE hack AS SELECT * FROM mart.edition_kpis",
     "SELECT * FROM mart.team_performance JOIN raw.matches USING (year)",  # join proibido
+    "SELECT * FROM predict.internal_scratch",  # schema predict, tabela não exposta
 ]
+
+
+def test_predictions_2026_in_allowlist() -> None:
+    assert "predict.predictions_2026" in ALLOWED_TABLES
 
 
 @pytest.mark.parametrize("sql", VALID)
