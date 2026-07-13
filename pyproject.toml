@@ -10,6 +10,7 @@ dependencies = [
     "kaggle>=1.6",
     "typer>=0.15",
     "numpy>=2.0",
+    "python-dotenv>=1.0",
 ]
 
 [project.scripts]
@@ -32,7 +33,6 @@ agent = [
     "pydantic-ai-slim[google]>=2.5",
     "sqlglot>=30",
     "streamlit>=1.58",
-    "python-dotenv>=1.0",
 ]
 
 [build-system]
