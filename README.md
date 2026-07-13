@@ -29,6 +29,10 @@ O projeto percorre as 4 missões do desafio como camadas de um mesmo pipeline: *
 ```bash
 uv sync --all-groups           # ou por grupo: --group dev / eda / agent
 
+uv run copa pipeline           # atalho: download → ingest → build → predict de uma vez
+                               # (use --skip-download se data/raw/ já existe)
+
+# ...ou rode etapa por etapa, para debugging granular:
 uv run copa download           # baixa data/raw/*.csv (Kaggle API)
 uv run copa ingest             # CSVs -> DuckDB, camada raw
 uv run copa build              # staging + marts (sql/)

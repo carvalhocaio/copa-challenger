@@ -68,6 +68,38 @@ def predict() -> None:
 
 
 @app.command()
+def pipeline(
+    skip_download: bool = typer.Option(
+        False,
+        "--skip-download",
+        help="Pula o download e usa os CSVs já presentes em data/raw/.",
+    ),
+) -> None:
+    """Roda o pipeline completo de ponta a ponta: download → ingest → build → predict."""
+    from copa_challenger.data.build import build_all
+    from copa_challenger.data.download import download_dataset
+    from copa_challenger.data.ingest import ingest_raw
+    from copa_challenger.predict.predict import generate_predictions
+
+    if skip_download:
+        print("[1/4] download: pulado (--skip-download)")
+    else:
+        print("[1/4] download...")
+        download_dataset()
+
+    print("[2/4] ingest...")
+    ingest_raw()
+
+    print("[3/4] build...")
+    build_all()
+
+    print("[4/4] predict...")
+    generate_predictions()
+
+    print("Pipeline concluído: submissions/predictions_2026.csv gerado.")
+
+
+@app.command()
 def backtest() -> None:
     """Valida o modelo preditivo contra os 64 jogos reais de 2022 (Missão 04)."""
     from copa_challenger.predict.evaluate import run_backtest
