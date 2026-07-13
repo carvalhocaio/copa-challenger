@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instala uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sincroniza dependências
+        run: uv sync --group dev --group agent
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Testes (pytest)
+        run: uv run pytest
