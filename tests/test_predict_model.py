@@ -52,6 +52,25 @@ def test_shrinkage_pulls_small_samples_harder_toward_average() -> None:
     assert abs(panama - 1.0) < abs(argentina - 1.0)
 
 
+@pytest.mark.parametrize(
+    ("blend_weight", "expected_attack"),
+    [(1.0, 2.0), (0.0, 1.0), (0.5, 1.5)],
+)
+def test_blend_weight_mixes_goals_and_xg(blend_weight: float, expected_attack: float) -> None:
+    # 1 jogo, k=0 (sem shrinkage), league_avg=1 -> attack = blend do ataque:
+    # w*gol + (1-w)*xg com gol=2.0 e xg=1.0. w=1 usa só gol, w=0 só xg, w=0.5 a média.
+    df = pl.DataFrame({
+        "team": ["T"],
+        "matches": [1.0],
+        "goals_for": [2.0],
+        "goals_against": [2.0],
+        "xg_for": [1.0],
+        "xg_against": [1.0],
+    })
+    out = strength_from_stats(df, league_avg=1.0, k=0.0, blend_weight=blend_weight)
+    assert out["attack"].item() == pytest.approx(expected_attack)
+
+
 def test_fit_fallback_recovers_linear_relationship() -> None:
     points = [500.0, 1000.0, 1500.0, 2000.0]
     features = pl.DataFrame({
